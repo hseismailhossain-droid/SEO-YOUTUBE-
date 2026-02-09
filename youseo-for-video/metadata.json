@@ -1,0 +1,7 @@
+{
+  "name": "YouSEO For Video",
+  "description": "An all-in-one hub for YouTube Channel growth, featuring AI-powered keyword generation, SEO analysis, viral hooks, and more.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
