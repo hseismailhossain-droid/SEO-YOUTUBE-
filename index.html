@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Earn Money App</title>
+    
+    <!-- Ad Scripts -->
+    <script src="https://slidexperimentalimmoral.com/61/65/8c/61658ca0d6b568fc54ac8518d329592f.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f1f2f6; padding-bottom: 80px; }
+        
+        .app-header { background: #2f3542; color: white; padding: 20px; border-radius: 0 0 20px 20px; text-align: center; }
+        
+        .user-info { display: flex; justify-content: space-around; background: white; margin: -20px 15px 10px; padding: 15px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); color: #2f3542; }
+        .balance-box { font-size: 18px; font-weight: bold; color: #2ed573; }
+        
+        /* Slider */
+        .slider-box { width: 92%; margin: 15px auto; height: 160px; overflow: hidden; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .slides { display: flex; width: 300%; height: 100%; animation: slide 9s infinite; }
+        .slides img { width: 100%; height: 100%; object-fit: cover; }
+        @keyframes slide { 0% {transform:translateX(0%);} 33% {transform:translateX(-100%);} 66% {transform:translateX(-200%);} 100% {transform:translateX(0%);} }
+
+        /* Task Section */
+        .section-title { margin-left: 20px; font-weight: bold; color: #57606f; margin-top: 10px; }
+        .task-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
+        .task-btn { padding: 25px 10px; border-radius: 15px; text-align: center; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: 0.3s; position: relative; }
+        .task-btn.locked { background: #ced6e0 !important; color: #707a8a; cursor: not-allowed; opacity: 0.7; }
+        .task-btn.locked::after { content: '🔒'; position: absolute; top: 5px; right: 10px; font-size: 12px; }
+
+        /* Withdraw Section */
+        #withdrawView { background: white; margin: 15px; padding: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: none; }
+        .input-field { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; outline: none; }
+        .withdraw-btn { width: 100%; padding: 12px; background: #ff4757; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* History */
+        .history-item { border-bottom: 1px solid #eee; padding: 10px 0; display: flex; justify-content: space-between; font-size: 13px; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; box-shadow: 0 -3px 15px rgba(0,0,0,0.1); z-index: 1000; }
+        .nav-item { text-align: center; color: #2f3542; cursor: pointer; font-size: 12px; }
+
+        /* Login Modal */
+        #nameModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-content { background: white; padding: 30px; border-radius: 20px; width: 85%; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <!-- User Name Popup -->
+    <div id="nameModal">
+        <div class="modal-content">
+            <h2>Welcome!</h2>
+            <p>Enter your name to start earning</p>
+            <input type="text" id="userNameInput" class="input-field" placeholder="Full Name">
+            <button class="withdraw-btn" onclick="saveUser()">Get Started</button>
+        </div>
+    </div>
+
+    <div class="app-header">
+        <h2>TRUSTED EARN</h2>
+    </div>
+
+    <div class="user-info">
+        <div>User: <span id="uName">...</span></div>
+        <div class="balance-box">Wallet: ৳<span id="uBalance">0.00</span></div>
+    </div>
+
+    <!-- Image Slider -->
+    <div class="slider-box">
+        <div class="slides">
+            <img src="https://via.placeholder.com/800x400/2f3542/ffffff?text=Task+1-25+Unlock+Step+by+Step" alt="S1">
+            <img src="https://via.placeholder.com/800x400/2ed573/ffffff?text=Earn+0.05+Taka+Per+Ad" alt="S2">
+            <img src="https://via.placeholder.com/800x400/ffa502/ffffff?text=Withdraw+to+Bkash+or+Nagad" alt="S3">
+        </div>
+    </div>
+
+    <!-- Page Views -->
+    <div id="homeView">
+        <p class="section-title">Daily Tasks</p>
+        <div class="task-grid" id="taskGrid"></div>
+    </div>
+
+    <div id="withdrawView">
+        <h3>Withdraw Earnings</h3>
+        <p style="font-size: 12px; color: red;">Minimum withdraw amount: ৳10</p>
+        <select id="wMethod" class="input-field">
+            <option value="Bkash">Bkash</option>
+            <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket</option>
+        </select>
+        <input type="number" id="wNumber" class="input-field" placeholder="Wallet Number">
+        <input type="number" id="wAmount" class="input-field" placeholder="Amount (min 10)">
+        <button class="withdraw-btn" onclick="processWithdraw()">Withdraw Now</button>
+        
+        <h4 style="margin-top:20px">Withdrawal List</h4>
+        <div id="historyList">
+            <div class="history-item"><span>Abir (Bkash)</span> <span>৳20 - Paid</span></div>
+            <div class="history-item"><span>Mim (Nagad)</span> <span>৳50 - Paid</span></div>
+        </div>
+    </div>
+
+    <!-- Banner Ad -->
+    <div style="text-align:center; margin:15px 0;">
+        <script type="text/javascript">
+            atOptions = { 'key' : 'd78f2241e2528637f7b5ab382d988018', 'format' : 'iframe', 'height' : 50, 'width' : 320, 'params' : {} };
+        </script>
+        <script src="https://slidexperimentalimmoral.com/d78f2241e2528637f7b5ab382d988018/invoke.js"></script>
+    </div>
+
+    <!-- Nav Bar -->
+    <div class="bottom-nav">
+        <div class="nav-item" onclick="showPage('home')">🏠<br>Home</div>
+        <div class="nav-item" onclick="showPage('withdraw')">💰<br>Withdraw</div>
+        <div class="nav-item" onclick="alert('Leaderboard Loading...')">🏆<br>Leader</div>
+    </div>
+
+    <!-- Extra Ads Scripts -->
+    <script src="https://slidexperimentalimmoral.com/da/51/f0/da51f0e8be13617d90ff5b26937025ba.js"></script>
+    <script src="https://slidexperimentalimmoral.com/40/78/ed/4078edaa2f6d2ff63a82845978385c98.js"></script>
+
+    <script>
+        const adLinks = [
+            "https://slidexperimentalimmoral.com/r29staxe4?key=16f55b34cec622e9ffb37327506418bc",
+            "https://slidexperimentalimmoral.com/hs9kza21rc?key=ff20d7f6852c4f44ed0dd6bda5910481",
+            "https://slidexperimentalimmoral.com/u9kbyd9v?key=ec1ba7d3b7eb44d0ba940dba52d1c057"
+        ];
+
+        const colors = ["#ff4757", "#2ed573", "#1e90ff", "#ffa502", "#3742fa", "#70a1ff", "#7bed9f", "#eccc68", "#ff6b81", "#5352ed", "#ff7f50", "#26de81", "#4b7bec", "#a55eea", "#0fbcf9", "#05c46b", "#ffc048", "#ffdd59", "#ff5e57", "#d2dae2", "#485460", "#ffa801", "#ffd32a", "#ff3f34", "#1e272e"];
+
+        let user = localStorage.getItem('earn_user');
+        let balance = parseFloat(localStorage.getItem('earn_bal')) || 0;
+        let tasksDone = parseInt(localStorage.getItem('earn_tasks')) || 0;
+
+        window.onload = function() {
+            if(!user) {
+                document.getElementById('nameModal').style.display = 'flex';
+            } else {
+                document.getElementById('nameModal').style.display = 'none';
+                updateUI();
+            }
+        };
+
+        function saveUser() {
+            let name = document.getElementById('userNameInput').value;
+            if(name.length > 2) {
+                localStorage.setItem('earn_user', name);
+                user = name;
+                document.getElementById('nameModal').style.display = 'none';
+                updateUI();
+            } else {
+                alert("Please enter a valid name");
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('uName').innerText = user;
+            document.getElementById('uBalance').innerText = balance.toFixed(2);
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const grid = document.getElementById('taskGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 25; i++) {
+                let btn = document.createElement('div');
+                btn.className = 'task-btn ' + (i > tasksDone + 1 ? 'locked' : '');
+                btn.style.backgroundColor = colors[i-1];
+                btn.innerHTML = (i <= tasksDone) ? 'Task ' + i + '<br>✅ Done' : 'Task ' + i;
+                
+                btn.onclick = function() {
+                    if (i === tasksDone + 1) startTask(i);
+                    else if (i > tasksDone + 1) alert("Complete previous task first!");
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        function startTask(id) {
+            window.open(adLinks[Math.floor(Math.random() * adLinks.length)], '_blank');
+            alert("Completing Task " + id + "... Stay 10 sec on the site to earn ৳0.05");
+            
+            setTimeout(function() {
+                tasksDone++;
+                balance += 0.05;
+                localStorage.setItem('earn_tasks', tasksDone);
+                localStorage.setItem('earn_bal', balance);
+                updateUI();
+                alert("Task Successful! ৳0.05 added to your wallet.");
+            }, 10000);
+        }
+
+        function showPage(page) {
+            document.getElementById('homeView').style.display = (page === 'home') ? 'block' : 'none';
+            document.getElementById('withdrawView').style.display = (page === 'withdraw') ? 'block' : 'none';
+        }
+
+        function processWithdraw() {
+            let amount = parseFloat(document.getElementById('wAmount').value);
+            if(balance >= amount && amount >= 10) {
+                balance -= amount;
+                localStorage.setItem('earn_bal', balance);
+                updateUI();
+                let history = document.getElementById('historyList');
+                history.innerHTML = `<div class='history-item'><span>${user} (${document.getElementById('wMethod').value})</span> <span>৳${amount} - Pending</span></div>` + history.innerHTML;
+                alert("Withdraw request submitted!");
+            } else {
+                alert("Minimum ৳10 required or Insufficient balance!");
+            }
+        }
+    </script>
+</body>
+</html>
